@@ -453,7 +453,4 @@ subscriptions model =
     receiveAddress Recv
 
 
--- UTILITIES
--- Unbonding: terra1a85qcejpldmd7vmt0pct07yms8fgmzg8n8m96k
--- Unbonding (3claims) terra1arr33mrru6sd29z2pyupmculxdaenzags2quzc
--- Old Governance: terra1mseqs6rwgx5mhy2mcv450g4hky20rglchq5379
+
