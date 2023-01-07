@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Elm + Bech32Convert</title>
+  <script type="text/javascript" src="main.js"></script>
+
+ 
+</head>
+
+<body>
+    <div id="myapp"></div>
+</body>
+
+<script type="text/javascript">
+
+// Start the Elm application.
+var app = Elm.Main.init({
+    node: document.getElementById('myapp')
+});
+
+
+</script>
+
+<script type="text/javascript" src="src/buffer.js"></script>
+<script type="text/javascript" src="src/bech32.js"></script>
+<script type="text/javascript" src="src/address.js"></script>
+
+
+<script type="text/javascript">
+
+var terra;
+
+app.ports.sendAddress.subscribe(function(newMapped) {
+  console.log("DataFromElm: ", newMapped)
+  terra = String(newMapped);
+  var address = terra;
+  var prefix = "kujira";
+  var output = String(lookup(address, prefix));
+  console.log ("Output from conversion: ", output);
+  app.ports.receiveAddress.send(output);
+  });
+
+
+</script>
+
+</html>
