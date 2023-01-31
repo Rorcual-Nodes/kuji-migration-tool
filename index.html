@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Elm + Bech32Convert</title>
+  <link rel="stylesheet" href="minimal.css">
   <script type="text/javascript" src="main.js"></script>
 
  
@@ -16,7 +17,7 @@
 <script type="text/javascript">
 
 // Start the Elm application.
-var app = Elm.Main.init({
+var app = Elm.Mainv3.init({
     node: document.getElementById('myapp')
 });
 
@@ -41,6 +42,20 @@ app.ports.sendAddress.subscribe(function(newMapped) {
   console.log ("Output from conversion: ", output);
   app.ports.receiveAddress.send(output);
   });
+
+// index.js (or similar)
+
+app.ports.copyToClipboard.subscribe(function(text) {
+    console.log("Clipboard: ", text)
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            app.ports.copyResult.send("Copied to clipboard!");
+        })
+        .catch(err => {
+            app.ports.copyResult.send("Error: " + err.message);
+        });
+});
+
 
 
 </script>
