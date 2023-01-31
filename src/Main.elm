@@ -2,12 +2,13 @@ port module Main exposing (Model, Msg(..), amountDecoder, init, main, update, vi
 
 import Browser
 import Debug
-import Html exposing (Html, button, div, input, p, text)
+import Html exposing (Html, button, div, input, p, text, span, h1)
 import Html.Events exposing (onClick, onInput)
+import Html.Attributes exposing (class, style, placeholder)
 import Http
 import Json.Decode as Decode
 import String exposing (fromFloat)
-
+import Delay
 
 
 -- MAIN
@@ -30,14 +31,17 @@ main =
 init : ( Model, Cmd Msg )
 init =
     ( { address = ""
-      , urlUnbonding = ""
-      , urlLP = ""
-      , urlOG = ""
+      , urlUnbonding = "-"
+      , urlLP = "-"
+      , urlOG = "-"
       , amount = 0
       , stake = 0
       , bonded = 0
       , available = 0
-      , mapped = ""
+      , mapped = "-"
+      , error = ""
+      , showPopup = False
+      , popupMessage = ""
       }
     , Cmd.none
     )
@@ -45,8 +49,6 @@ init =
 
 
 -- TYPES
-
-
 
 
 type alias Model =
@@ -59,7 +61,16 @@ type alias Model =
     , bonded : Float
     , available : Float
     , mapped : String
+    , error : String
+    , showPopup : Bool
+    , popupMessage : String
     }
+
+--type alias CopyReturn =
+--    { result : String
+--    , message : String
+--    }
+
 
 
 -- PORTS
@@ -69,44 +80,60 @@ port sendAddress : String -> Cmd msg
 port receiveAddress : (String -> msg) -> Sub msg
 
 
+port copyToClipboard : String -> Cmd msg
+port copyResult : ( String -> msg ) -> Sub msg
+
+
 -- MESSAGES
 
 
 type Msg
-    = UpdateAddress String                                  -- Updates the address on Model
-    | SubmitRequest                                         -- Submits HTTP Requests for the Migration JSONs
-    | AmountCompleted (Result Http.Error Float)             -- Unbonding request completed
-    | BondedCompleted (Result Http.Error Float)             -- LP request completed
-    | GovernanceCompleted (Result Http.Error Float)         -- Old governance stake completed
-    | Governance2Completed (Result Http.Error Float)        -- Old governance pending claims completed
-    | AvailableCompleted (Result Http.Error Float)           -- Available for migration
+    = UpdateAddress String -- Updates the address on Model
+    | SubmitRequest -- Submits HTTP Requests for the Migration JSONs
+    | AmountCompleted (Result Http.Error Float) -- Unbonding request completed
+    | BondedCompleted (Result Http.Error Float) -- LP request completed
+    | GovernanceCompleted (Result Http.Error Float) -- Old governance stake completed
+    | Governance2Completed (Result Http.Error Float) -- Old governance pending claims completed
+    | AvailableCompleted (Result Http.Error Float) -- Available for migration
     | Recv String
-    
-
+    | Copy String
+    | CopyReturn String
+    | HidePopup
 
 blockheight : String
-blockheight = "%22%7D%7D&height=7607789"
+blockheight =
+    "%22%7D%7D&height=7607789"
 
 
 unbondingContract : String
-unbondingContract = "https://fcd.terra.dev/wasm/contracts/terra1vvj874nwtmxk0u0spj83d364xyhqk2e652jrck/store?query_msg=%7B%22claims%22:%7B%22address%22:%22"
+unbondingContract =
+    "https://fcd.terra.dev/wasm/contracts/terra1vvj874nwtmxk0u0spj83d364xyhqk2e652jrck/store?query_msg=%7B%22claims%22:%7B%22address%22:%22"
 
 
 farmingContract : String
-farmingContract = "https://fcd.terra.dev/wasm/contracts/terra1cf9q9lq7tdfju95sdw78y9e34a6qrq3rrc6dre/store?query_msg=%7B%22staker_info%22:%7B%22staker%22:%22"
+farmingContract =
+    "https://fcd.terra.dev/wasm/contracts/terra1cf9q9lq7tdfju95sdw78y9e34a6qrq3rrc6dre/store?query_msg=%7B%22staker_info%22:%7B%22staker%22:%22"
 
 
 governanceContract : String
-governanceContract = "https://fcd.terra.dev/wasm/contracts/terra1w7gtx76rs7x0e27l7x2e88vcr52tp9d8g4umjz/store?query_msg=%7B%22staked%22:%7B%22address%22:%22"
+governanceContract =
+    "https://fcd.terra.dev/wasm/contracts/terra1w7gtx76rs7x0e27l7x2e88vcr52tp9d8g4umjz/store?query_msg=%7B%22staked%22:%7B%22address%22:%22"
+
 
 claimsContract : String
-claimsContract = "https://fcd.terra.dev/wasm/contracts/terra1w7gtx76rs7x0e27l7x2e88vcr52tp9d8g4umjz/store?query_msg=%7B%22claims%22:%7B%22address%22:%22"
+claimsContract =
+    "https://fcd.terra.dev/wasm/contracts/terra1w7gtx76rs7x0e27l7x2e88vcr52tp9d8g4umjz/store?query_msg=%7B%22claims%22:%7B%22address%22:%22"
+
 
 queryDenom : String
-queryDenom = "/by_denom?denom=ukuji"
+queryDenom =
+    "/by_denom?denom=ukuji"
+
 
 availableBalance : String
-availableBalance = "https://lcd.kaiyo.kujira.setten.io/cosmos/bank/v1beta1/balances/"
+availableBalance =
+    "https://lcd.kaiyo.kujira.setten.io/cosmos/bank/v1beta1/balances/"
+
 
 
 -- UPDATE
@@ -122,7 +149,6 @@ update msg model =
             ( { model | mapped = str }
             , Cmd.none
             )
-
 
         SubmitRequest ->
             let
@@ -156,7 +182,6 @@ update msg model =
                                 stakeDecoder
                         }
 
-                
                 request4 =
                     Http.get
                         { url = claimsContract ++ model.address ++ blockheight
@@ -171,11 +196,8 @@ update msg model =
                                 )
                                 governance2Decoder
                         }
-
-                
-
             in
-            ( model, Cmd.batch [ sendAddress model.address, request1, request2, request4 ])
+            ( model, Cmd.batch [ sendAddress model.address, request1, request2, request4 ] )
 
         AmountCompleted (Ok amount) ->
             ( { model
@@ -188,18 +210,18 @@ update msg model =
                         "-"
               }
             , Http.get
-                        { url = availableBalance ++ model.mapped ++ queryDenom
-                        , expect =
-                            Http.expectJson
-                                (\response5 ->
-                                    let
-                                        _ =
-                                            Debug.log "Response5: " response5
-                                    in
-                                    AvailableCompleted response5
-                                )
-                                availableDecoder
-                        }
+                { url = availableBalance ++ model.mapped ++ queryDenom
+                , expect =
+                    Http.expectJson
+                        (\response5 ->
+                            let
+                                _ =
+                                    Debug.log "Response5: " response5
+                            in
+                            AvailableCompleted response5
+                        )
+                        availableDecoder
+                }
             )
 
         AmountCompleted (Err error) ->
@@ -208,18 +230,18 @@ update msg model =
                 , amount = 0
               }
             , Http.get
-                        { url = availableBalance ++ model.mapped ++ queryDenom
-                        , expect =
-                            Http.expectJson
-                                (\response5 ->
-                                    let
-                                        _ =
-                                            Debug.log "Response5: " response5
-                                    in
-                                    AvailableCompleted response5
-                                )
-                                availableDecoder
-                        }
+                { url = availableBalance ++ model.mapped ++ queryDenom
+                , expect =
+                    Http.expectJson
+                        (\response5 ->
+                            let
+                                _ =
+                                    Debug.log "Response5: " response5
+                            in
+                            AvailableCompleted response5
+                        )
+                        availableDecoder
+                }
             )
 
         BondedCompleted (Ok bonded) ->
@@ -269,35 +291,36 @@ update msg model =
                         "-"
               }
             , Http.get
-                        { url = governanceContract ++ model.address ++ blockheight
-                        , expect =
-                            Http.expectJson
-                                (\response3 ->
-                                    let
-                                        _ =
-                                            Debug.log "Response3: " response3
-                                    in
-                                    GovernanceCompleted response3
-                                )
-                                governanceDecoder
-                        }
+                { url = governanceContract ++ model.address ++ blockheight
+                , expect =
+                    Http.expectJson
+                        (\response3 ->
+                            let
+                                _ =
+                                    Debug.log "Response3: " response3
+                            in
+                            GovernanceCompleted response3
+                        )
+                        governanceDecoder
+                }
             )
 
         Governance2Completed (Err error) ->
             ( { model | stake = 0 }
             , Http.get
-                        { url = governanceContract ++ model.address ++ blockheight
-                        , expect =
-                            Http.expectJson
-                                (\response3 ->
-                                    let
-                                        _ =
-                                            Debug.log "Response3: " response3
-                                    in
-                                    GovernanceCompleted response3
-                                )
-                                governanceDecoder
-                        } )
+                { url = governanceContract ++ model.address ++ blockheight
+                , expect =
+                    Http.expectJson
+                        (\response3 ->
+                            let
+                                _ =
+                                    Debug.log "Response3: " response3
+                            in
+                            GovernanceCompleted response3
+                        )
+                        governanceDecoder
+                }
+            )
 
         AvailableCompleted (Ok available) ->
             ( { model
@@ -309,30 +332,67 @@ update msg model =
         AvailableCompleted (Err error) ->
             ( { model | available = 0 }, Cmd.none )
 
+        Copy text ->
+            ( model, copyToClipboard text )
 
-        
+        CopyReturn str ->
+            ( { model | popupMessage = str, showPopup = True} , Cmd.batch [ Delay.after 3000 HidePopup ] )
 
 
+        HidePopup ->
+            ( { model | showPopup = False }, Cmd.none )
 
 -- VIEW
 
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ input [ onInput UpdateAddress  ] []
-        , button [ onClick ( SubmitRequest ) ] [ text "Check" ]
-        , p [] [ text ("Unbonding: " ++ String.fromFloat model.amount) ]
-        , p [] [ text ("Proof: " ++ model.urlUnbonding) ]
-        , p [] [ text ("LPs: " ++ String.fromFloat model.bonded) ]
-        , p [] [ text ("Proof: " ++ model.urlLP) ]
-        , p [] [ text ("Old Governance: " ++ String.fromFloat model.stake) ]
-        , p [] [ text ("Proof: " ++ model.urlOG) ]
-        , p [] [ text ("Available: " ++ String.fromFloat model.available) ]
-        , p [] [ text ("Mapped Address: " ++ model.mapped) ]
+    div [] [
+        h1 [] [text "Kujira Migration Tool", button [ class "copy-btn" , onClick (Copy (copyForm model)) ] []]
+        , p [] [input [placeholder "Insert a valid Terra Address", onInput UpdateAddress ] []
+            , button [class "neumorphism-button", onClick SubmitRequest ] [ text "Check Address" ]
+            ]
+
+        , p [] [ text ("Unbonding: ")
+                , div [class "code"] [ text (String.fromFloat model.amount)]
+                ]
+        , p [] [ text ("Proof: ")
+                , div [class "code"] [ text model.urlUnbonding ]
+                ]
+        , p [] [ text ("LPs: ")
+                , div [class "code"] [ text (String.fromFloat model.bonded)]
+                ]
+        , p [] [ text ("Proof: ") 
+                , div [class "code"] [ text model.urlLP ]
+                ]
+        , p [] [ text ("Old Governance: " )
+                , div [class "code"] [ text (String.fromFloat model.stake)]
+                ]
+        , p [] [ text ("Proof: ")
+                , div [class "code"] [ text model.urlOG ]
+                ]
+        , p [] [ text ("Available: ")
+                , div [class "code"] [ text (String.fromFloat model.available)]
+                ]
+        , p [] [ text ("Mapped Address: ")
+                , div [class "code"] [ text model.mapped ]
+                ]
+        ,if model.showPopup == True then
+            div [ class "error" ]  [ text model.popupMessage ]
+          else
+            div [] []
         ]
 
-
+copyForm : Model -> String
+copyForm model = "Address: " ++ model.address 
+        ++ "\nUnbonding: " ++ String.fromFloat model.amount ++ " usKUJI"
+        ++ "\nProof: " ++ model.urlUnbonding 
+        ++ "\nLPs: " ++ String.fromFloat model.bonded ++ " uLPs"
+        ++ "\nProof: " ++ model.urlLP
+        ++ "\nOld Governance: " ++ fromFloat model.stake ++ " uKUJI"
+        ++ "\nProof: " ++ model.urlOG
+        ++ "\nAvailable: " ++ fromFloat model.available ++ " uKUJI"
+        ++ "\nMapped Address: " ++ model.mapped
 
 -- DECODERS
 
@@ -358,7 +418,8 @@ amountDecoder =
                     )
                 )
             )
-        )|> Decode.map List.sum
+        )
+        |> Decode.map List.sum
 
 
 stakeDecoder : Decode.Decoder Float
@@ -445,12 +506,23 @@ availableDecoder =
             )
         )
 
+
+
 -- SUBSCRIPTIONS
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    receiveAddress Recv
+    Sub.batch
+        [ receiveAddress Recv
+        , copyResult CopyReturn
+        ]
 
 
+
+-- UTILITIES
+-- Unbonding: terra1a85qcejpldmd7vmt0pct07yms8fgmzg8n8m96k
+-- Unbonding (3claims) terra1arr33mrru6sd29z2pyupmculxdaenzags2quzc
+-- Old Governance: terra1mseqs6rwgx5mhy2mcv450g4hky20rglchq5379
+-- Old Governance (Claims Sumados) terra12vvt923ger4jdszmx50zvcekklg9np9j44k495
 
