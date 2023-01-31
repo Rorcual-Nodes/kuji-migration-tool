@@ -5336,43 +5336,43 @@ var $elm$core$Task$perform = F2(
 var $elm$browser$Browser$element = _Browser_element;
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Mainv3$init = _Utils_Tuple2(
+var $author$project$Main$init = _Utils_Tuple2(
 	{address: '', amount: 0, available: 0, bonded: 0, error: '', mapped: '-', popupMessage: '', showPopup: false, stake: 0, urlLP: '-', urlOG: '-', urlUnbonding: '-'},
 	$elm$core$Platform$Cmd$none);
-var $author$project$Mainv3$CopyReturn = function (a) {
+var $author$project$Main$CopyReturn = function (a) {
 	return {$: 'CopyReturn', a: a};
 };
-var $author$project$Mainv3$Recv = function (a) {
+var $author$project$Main$Recv = function (a) {
 	return {$: 'Recv', a: a};
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$Mainv3$copyResult = _Platform_incomingPort('copyResult', $elm$json$Json$Decode$string);
-var $author$project$Mainv3$receiveAddress = _Platform_incomingPort('receiveAddress', $elm$json$Json$Decode$string);
-var $author$project$Mainv3$subscriptions = function (model) {
+var $author$project$Main$copyResult = _Platform_incomingPort('copyResult', $elm$json$Json$Decode$string);
+var $author$project$Main$receiveAddress = _Platform_incomingPort('receiveAddress', $elm$json$Json$Decode$string);
+var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				$author$project$Mainv3$receiveAddress($author$project$Mainv3$Recv),
-				$author$project$Mainv3$copyResult($author$project$Mainv3$CopyReturn)
+				$author$project$Main$receiveAddress($author$project$Main$Recv),
+				$author$project$Main$copyResult($author$project$Main$CopyReturn)
 			]));
 };
-var $author$project$Mainv3$AmountCompleted = function (a) {
+var $author$project$Main$AmountCompleted = function (a) {
 	return {$: 'AmountCompleted', a: a};
 };
-var $author$project$Mainv3$AvailableCompleted = function (a) {
+var $author$project$Main$AvailableCompleted = function (a) {
 	return {$: 'AvailableCompleted', a: a};
 };
-var $author$project$Mainv3$BondedCompleted = function (a) {
+var $author$project$Main$BondedCompleted = function (a) {
 	return {$: 'BondedCompleted', a: a};
 };
-var $author$project$Mainv3$Governance2Completed = function (a) {
+var $author$project$Main$Governance2Completed = function (a) {
 	return {$: 'Governance2Completed', a: a};
 };
-var $author$project$Mainv3$GovernanceCompleted = function (a) {
+var $author$project$Main$GovernanceCompleted = function (a) {
 	return {$: 'GovernanceCompleted', a: a};
 };
-var $author$project$Mainv3$HidePopup = {$: 'HidePopup'};
+var $author$project$Main$HidePopup = {$: 'HidePopup'};
 var $elm$core$Basics$always = F2(
 	function (a, _v0) {
 		return a;
@@ -5393,7 +5393,7 @@ var $elm$core$List$sum = function (numbers) {
 	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
 };
 var $elm$core$String$toFloat = _String_toFloat;
-var $author$project$Mainv3$amountDecoder = A2(
+var $author$project$Main$amountDecoder = A2(
 	$elm$json$Json$Decode$map,
 	$elm$core$List$sum,
 	A2(
@@ -5418,8 +5418,8 @@ var $author$project$Mainv3$amountDecoder = A2(
 							}
 						},
 						$elm$json$Json$Decode$string))))));
-var $author$project$Mainv3$availableBalance = 'https://lcd.kaiyo.kujira.setten.io/cosmos/bank/v1beta1/balances/';
-var $author$project$Mainv3$availableDecoder = A2(
+var $author$project$Main$availableBalance = 'https://lcd.kaiyo.kujira.setten.io/cosmos/bank/v1beta1/balances/';
+var $author$project$Main$availableDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'balance',
 	A2(
@@ -5437,10 +5437,10 @@ var $author$project$Mainv3$availableDecoder = A2(
 				}
 			},
 			$elm$json$Json$Decode$string)));
-var $author$project$Mainv3$blockheight = '%22%7D%7D&height=7607789';
-var $author$project$Mainv3$claimsContract = 'https://fcd.terra.dev/wasm/contracts/terra1w7gtx76rs7x0e27l7x2e88vcr52tp9d8g4umjz/store?query_msg=%7B%22claims%22:%7B%22address%22:%22';
+var $author$project$Main$blockheight = '%22%7D%7D&height=7607789';
+var $author$project$Main$claimsContract = 'https://fcd.terra.dev/wasm/contracts/terra1w7gtx76rs7x0e27l7x2e88vcr52tp9d8g4umjz/store?query_msg=%7B%22claims%22:%7B%22address%22:%22';
 var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Mainv3$copyToClipboard = _Platform_outgoingPort('copyToClipboard', $elm$json$Json$Encode$string);
+var $author$project$Main$copyToClipboard = _Platform_outgoingPort('copyToClipboard', $elm$json$Json$Encode$string);
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -6055,7 +6055,7 @@ var $elm$http$Http$expectJson = F2(
 						A2($elm$json$Json$Decode$decodeString, decoder, string));
 				}));
 	});
-var $author$project$Mainv3$farmingContract = 'https://fcd.terra.dev/wasm/contracts/terra1cf9q9lq7tdfju95sdw78y9e34a6qrq3rrc6dre/store?query_msg=%7B%22staker_info%22:%7B%22staker%22:%22';
+var $author$project$Main$farmingContract = 'https://fcd.terra.dev/wasm/contracts/terra1cf9q9lq7tdfju95sdw78y9e34a6qrq3rrc6dre/store?query_msg=%7B%22staker_info%22:%7B%22staker%22:%22';
 var $elm$http$Http$emptyBody = _Http_emptyBody;
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
@@ -6229,7 +6229,7 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $author$project$Mainv3$governance2Decoder = A2(
+var $author$project$Main$governance2Decoder = A2(
 	$elm$json$Json$Decode$map,
 	$elm$core$List$sum,
 	A2(
@@ -6254,8 +6254,8 @@ var $author$project$Mainv3$governance2Decoder = A2(
 							}
 						},
 						$elm$json$Json$Decode$string))))));
-var $author$project$Mainv3$governanceContract = 'https://fcd.terra.dev/wasm/contracts/terra1w7gtx76rs7x0e27l7x2e88vcr52tp9d8g4umjz/store?query_msg=%7B%22staked%22:%7B%22address%22:%22';
-var $author$project$Mainv3$governanceDecoder = A2(
+var $author$project$Main$governanceContract = 'https://fcd.terra.dev/wasm/contracts/terra1w7gtx76rs7x0e27l7x2e88vcr52tp9d8g4umjz/store?query_msg=%7B%22staked%22:%7B%22address%22:%22';
+var $author$project$Main$governanceDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'result',
 	A2(
@@ -6274,9 +6274,9 @@ var $author$project$Mainv3$governanceDecoder = A2(
 			},
 			$elm$json$Json$Decode$string)));
 var $elm$core$Debug$log = _Debug_log;
-var $author$project$Mainv3$queryDenom = '/by_denom?denom=ukuji';
-var $author$project$Mainv3$sendAddress = _Platform_outgoingPort('sendAddress', $elm$json$Json$Encode$string);
-var $author$project$Mainv3$stakeDecoder = A2(
+var $author$project$Main$queryDenom = '/by_denom?denom=ukuji';
+var $author$project$Main$sendAddress = _Platform_outgoingPort('sendAddress', $elm$json$Json$Encode$string);
+var $author$project$Main$stakeDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'result',
 	A2(
@@ -6294,8 +6294,8 @@ var $author$project$Mainv3$stakeDecoder = A2(
 				}
 			},
 			$elm$json$Json$Decode$string)));
-var $author$project$Mainv3$unbondingContract = 'https://fcd.terra.dev/wasm/contracts/terra1vvj874nwtmxk0u0spj83d364xyhqk2e652jrck/store?query_msg=%7B%22claims%22:%7B%22address%22:%22';
-var $author$project$Mainv3$update = F2(
+var $author$project$Main$unbondingContract = 'https://fcd.terra.dev/wasm/contracts/terra1vvj874nwtmxk0u0spj83d364xyhqk2e652jrck/store?query_msg=%7B%22claims%22:%7B%22address%22:%22';
+var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'UpdateAddress':
@@ -6319,12 +6319,12 @@ var $author$project$Mainv3$update = F2(
 							$elm$http$Http$expectJson,
 							function (response4) {
 								var _v3 = A2($elm$core$Debug$log, 'Response4: ', response4);
-								return $author$project$Mainv3$Governance2Completed(response4);
+								return $author$project$Main$Governance2Completed(response4);
 							},
-							$author$project$Mainv3$governance2Decoder),
+							$author$project$Main$governance2Decoder),
 						url: _Utils_ap(
-							$author$project$Mainv3$claimsContract,
-							_Utils_ap(model.address, $author$project$Mainv3$blockheight))
+							$author$project$Main$claimsContract,
+							_Utils_ap(model.address, $author$project$Main$blockheight))
 					});
 				var request2 = $elm$http$Http$get(
 					{
@@ -6332,12 +6332,12 @@ var $author$project$Mainv3$update = F2(
 							$elm$http$Http$expectJson,
 							function (response2) {
 								var _v2 = A2($elm$core$Debug$log, 'Response2: ', response2);
-								return $author$project$Mainv3$BondedCompleted(response2);
+								return $author$project$Main$BondedCompleted(response2);
 							},
-							$author$project$Mainv3$stakeDecoder),
+							$author$project$Main$stakeDecoder),
 						url: _Utils_ap(
-							$author$project$Mainv3$farmingContract,
-							_Utils_ap(model.address, $author$project$Mainv3$blockheight))
+							$author$project$Main$farmingContract,
+							_Utils_ap(model.address, $author$project$Main$blockheight))
 					});
 				var request1 = $elm$http$Http$get(
 					{
@@ -6345,19 +6345,19 @@ var $author$project$Mainv3$update = F2(
 							$elm$http$Http$expectJson,
 							function (response1) {
 								var _v1 = A2($elm$core$Debug$log, 'Response1: ', response1);
-								return $author$project$Mainv3$AmountCompleted(response1);
+								return $author$project$Main$AmountCompleted(response1);
 							},
-							$author$project$Mainv3$amountDecoder),
+							$author$project$Main$amountDecoder),
 						url: _Utils_ap(
-							$author$project$Mainv3$unbondingContract,
-							_Utils_ap(model.address, $author$project$Mainv3$blockheight))
+							$author$project$Main$unbondingContract,
+							_Utils_ap(model.address, $author$project$Main$blockheight))
 					});
 				return _Utils_Tuple2(
 					model,
 					$elm$core$Platform$Cmd$batch(
 						_List_fromArray(
 							[
-								$author$project$Mainv3$sendAddress(model.address),
+								$author$project$Main$sendAddress(model.address),
 								request1,
 								request2,
 								request4
@@ -6371,8 +6371,8 @@ var $author$project$Mainv3$update = F2(
 							{
 								amount: amount,
 								urlUnbonding: (amount > 0) ? _Utils_ap(
-									$author$project$Mainv3$unbondingContract,
-									_Utils_ap(model.address, $author$project$Mainv3$blockheight)) : '-'
+									$author$project$Main$unbondingContract,
+									_Utils_ap(model.address, $author$project$Main$blockheight)) : '-'
 							}),
 						$elm$http$Http$get(
 							{
@@ -6380,12 +6380,12 @@ var $author$project$Mainv3$update = F2(
 									$elm$http$Http$expectJson,
 									function (response5) {
 										var _v4 = A2($elm$core$Debug$log, 'Response5: ', response5);
-										return $author$project$Mainv3$AvailableCompleted(response5);
+										return $author$project$Main$AvailableCompleted(response5);
 									},
-									$author$project$Mainv3$availableDecoder),
+									$author$project$Main$availableDecoder),
 								url: _Utils_ap(
-									$author$project$Mainv3$availableBalance,
-									_Utils_ap(model.mapped, $author$project$Mainv3$queryDenom))
+									$author$project$Main$availableBalance,
+									_Utils_ap(model.mapped, $author$project$Main$queryDenom))
 							}));
 				} else {
 					var error = msg.a.a;
@@ -6399,12 +6399,12 @@ var $author$project$Mainv3$update = F2(
 									$elm$http$Http$expectJson,
 									function (response5) {
 										var _v5 = A2($elm$core$Debug$log, 'Response5: ', response5);
-										return $author$project$Mainv3$AvailableCompleted(response5);
+										return $author$project$Main$AvailableCompleted(response5);
 									},
-									$author$project$Mainv3$availableDecoder),
+									$author$project$Main$availableDecoder),
 								url: _Utils_ap(
-									$author$project$Mainv3$availableBalance,
-									_Utils_ap(model.mapped, $author$project$Mainv3$queryDenom))
+									$author$project$Main$availableBalance,
+									_Utils_ap(model.mapped, $author$project$Main$queryDenom))
 							}));
 				}
 			case 'BondedCompleted':
@@ -6416,8 +6416,8 @@ var $author$project$Mainv3$update = F2(
 							{
 								bonded: bonded,
 								urlLP: (bonded > 0) ? _Utils_ap(
-									$author$project$Mainv3$farmingContract,
-									_Utils_ap(model.address, $author$project$Mainv3$blockheight)) : '-'
+									$author$project$Main$farmingContract,
+									_Utils_ap(model.address, $author$project$Main$blockheight)) : '-'
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -6437,8 +6437,8 @@ var $author$project$Mainv3$update = F2(
 							{
 								stake: stake,
 								urlOG: (stake > 0) ? _Utils_ap(
-									$author$project$Mainv3$governanceContract,
-									_Utils_ap(model.address, $author$project$Mainv3$blockheight)) : '-'
+									$author$project$Main$governanceContract,
+									_Utils_ap(model.address, $author$project$Main$blockheight)) : '-'
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -6458,8 +6458,8 @@ var $author$project$Mainv3$update = F2(
 							{
 								stake: stake,
 								urlOG: (stake > 0) ? _Utils_ap(
-									$author$project$Mainv3$claimsContract,
-									_Utils_ap(model.address, $author$project$Mainv3$blockheight)) : '-'
+									$author$project$Main$claimsContract,
+									_Utils_ap(model.address, $author$project$Main$blockheight)) : '-'
 							}),
 						$elm$http$Http$get(
 							{
@@ -6467,12 +6467,12 @@ var $author$project$Mainv3$update = F2(
 									$elm$http$Http$expectJson,
 									function (response3) {
 										var _v6 = A2($elm$core$Debug$log, 'Response3: ', response3);
-										return $author$project$Mainv3$GovernanceCompleted(response3);
+										return $author$project$Main$GovernanceCompleted(response3);
 									},
-									$author$project$Mainv3$governanceDecoder),
+									$author$project$Main$governanceDecoder),
 								url: _Utils_ap(
-									$author$project$Mainv3$governanceContract,
-									_Utils_ap(model.address, $author$project$Mainv3$blockheight))
+									$author$project$Main$governanceContract,
+									_Utils_ap(model.address, $author$project$Main$blockheight))
 							}));
 				} else {
 					var error = msg.a.a;
@@ -6486,12 +6486,12 @@ var $author$project$Mainv3$update = F2(
 									$elm$http$Http$expectJson,
 									function (response3) {
 										var _v7 = A2($elm$core$Debug$log, 'Response3: ', response3);
-										return $author$project$Mainv3$GovernanceCompleted(response3);
+										return $author$project$Main$GovernanceCompleted(response3);
 									},
-									$author$project$Mainv3$governanceDecoder),
+									$author$project$Main$governanceDecoder),
 								url: _Utils_ap(
-									$author$project$Mainv3$governanceContract,
-									_Utils_ap(model.address, $author$project$Mainv3$blockheight))
+									$author$project$Main$governanceContract,
+									_Utils_ap(model.address, $author$project$Main$blockheight))
 							}));
 				}
 			case 'AvailableCompleted':
@@ -6514,7 +6514,7 @@ var $author$project$Mainv3$update = F2(
 				var text = msg.a;
 				return _Utils_Tuple2(
 					model,
-					$author$project$Mainv3$copyToClipboard(text));
+					$author$project$Main$copyToClipboard(text));
 			case 'CopyReturn':
 				var str = msg.a;
 				return _Utils_Tuple2(
@@ -6524,7 +6524,7 @@ var $author$project$Mainv3$update = F2(
 					$elm$core$Platform$Cmd$batch(
 						_List_fromArray(
 							[
-								A2($andrewMacmurray$elm_delay$Delay$after, 3000, $author$project$Mainv3$HidePopup)
+								A2($andrewMacmurray$elm_delay$Delay$after, 3000, $author$project$Main$HidePopup)
 							])));
 			default:
 				return _Utils_Tuple2(
@@ -6534,11 +6534,11 @@ var $author$project$Mainv3$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Mainv3$Copy = function (a) {
+var $author$project$Main$Copy = function (a) {
 	return {$: 'Copy', a: a};
 };
-var $author$project$Mainv3$SubmitRequest = {$: 'SubmitRequest'};
-var $author$project$Mainv3$UpdateAddress = function (a) {
+var $author$project$Main$SubmitRequest = {$: 'SubmitRequest'};
+var $author$project$Main$UpdateAddress = function (a) {
 	return {$: 'UpdateAddress', a: a};
 };
 var $elm$html$Html$button = _VirtualDom_node('button');
@@ -6551,8 +6551,8 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$core$String$fromFloat = _String_fromNumber;
-var $author$project$Mainv3$copyForm = function (model) {
-	return 'Address: ' + (model.address + ('\nUnbonding: ' + ($elm$core$String$fromFloat(model.amount) + ('\nProof: ' + (model.urlUnbonding + ('\nLPs: ' + ($elm$core$String$fromFloat(model.bonded) + ('\nProof: ' + (model.urlLP + ('\nOld Governance: ' + ($elm$core$String$fromFloat(model.stake) + ('\nProof: ' + (model.urlOG + ('\nAvailable: ' + ($elm$core$String$fromFloat(model.available) + ('\nMapped Address: ' + model.mapped))))))))))))))));
+var $author$project$Main$copyForm = function (model) {
+	return 'Address: ' + (model.address + ('\nUnbonding: ' + ($elm$core$String$fromFloat(model.amount) + (' usKUJI' + ('\nProof: ' + (model.urlUnbonding + ('\nLPs: ' + ($elm$core$String$fromFloat(model.bonded) + (' uLPs' + ('\nProof: ' + (model.urlLP + ('\nOld Governance: ' + ($elm$core$String$fromFloat(model.stake) + (' uKUJI' + ('\nProof: ' + (model.urlOG + ('\nAvailable: ' + ($elm$core$String$fromFloat(model.available) + (' uKUJI' + ('\nMapped Address: ' + model.mapped))))))))))))))))))));
 };
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
@@ -6609,7 +6609,7 @@ var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Mainv3$view = function (model) {
+var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -6627,8 +6627,8 @@ var $author$project$Mainv3$view = function (model) {
 							[
 								$elm$html$Html$Attributes$class('copy-btn'),
 								$elm$html$Html$Events$onClick(
-								$author$project$Mainv3$Copy(
-									$author$project$Mainv3$copyForm(model)))
+								$author$project$Main$Copy(
+									$author$project$Main$copyForm(model)))
 							]),
 						_List_Nil)
 					])),
@@ -6641,8 +6641,8 @@ var $author$project$Mainv3$view = function (model) {
 						$elm$html$Html$input,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$placeholder('Insert Terra address'),
-								$elm$html$Html$Events$onInput($author$project$Mainv3$UpdateAddress)
+								$elm$html$Html$Attributes$placeholder('Insert a valid Terra Address'),
+								$elm$html$Html$Events$onInput($author$project$Main$UpdateAddress)
 							]),
 						_List_Nil),
 						A2(
@@ -6650,7 +6650,7 @@ var $author$project$Mainv3$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$class('neumorphism-button'),
-								$elm$html$Html$Events$onClick($author$project$Mainv3$SubmitRequest)
+								$elm$html$Html$Events$onClick($author$project$Main$SubmitRequest)
 							]),
 						_List_fromArray(
 							[
@@ -6809,14 +6809,14 @@ var $author$project$Mainv3$view = function (model) {
 					])) : A2($elm$html$Html$div, _List_Nil, _List_Nil)
 			]));
 };
-var $author$project$Mainv3$main = $elm$browser$Browser$element(
+var $author$project$Main$main = $elm$browser$Browser$element(
 	{
 		init: function (flags) {
-			return $author$project$Mainv3$init;
+			return $author$project$Main$init;
 		},
-		subscriptions: $author$project$Mainv3$subscriptions,
-		update: $author$project$Mainv3$update,
-		view: $author$project$Mainv3$view
+		subscriptions: $author$project$Main$subscriptions,
+		update: $author$project$Main$update,
+		view: $author$project$Main$view
 	});
-_Platform_export({'Mainv3':{'init':$author$project$Mainv3$main(
+_Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
