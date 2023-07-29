@@ -2,13 +2,14 @@ port module Main exposing (Model, Msg(..), amountDecoder, init, main, update, vi
 
 import Browser
 import Debug
-import Html exposing (Html, button, div, input, p, text, span, h1)
+import Delay
+import Html exposing (Html, button, div, h1, input, p, span, text)
+import Html.Attributes exposing (class, placeholder, style)
 import Html.Events exposing (onClick, onInput)
-import Html.Attributes exposing (class, style, placeholder)
 import Http
 import Json.Decode as Decode
 import String exposing (fromFloat)
-import Delay
+
 
 
 -- MAIN
@@ -66,22 +67,26 @@ type alias Model =
     , popupMessage : String
     }
 
+
+
 --type alias CopyReturn =
 --    { result : String
 --    , message : String
 --    }
-
-
-
 -- PORTS
 
 
 port sendAddress : String -> Cmd msg
+
+
 port receiveAddress : (String -> msg) -> Sub msg
 
 
 port copyToClipboard : String -> Cmd msg
-port copyResult : ( String -> msg ) -> Sub msg
+
+
+port copyResult : (String -> msg) -> Sub msg
+
 
 
 -- MESSAGES
@@ -99,6 +104,7 @@ type Msg
     | Copy String
     | CopyReturn String
     | HidePopup
+
 
 blockheight : String
 blockheight =
@@ -132,7 +138,7 @@ queryDenom =
 
 availableBalance : String
 availableBalance =
-    "https://lcd.kaiyo.kujira.setten.io/cosmos/bank/v1beta1/balances/"
+    "https://lcd-kujira.mintthemoon.xyz/cosmos/bank/v1beta1/balances/"
 
 
 
@@ -336,63 +342,90 @@ update msg model =
             ( model, copyToClipboard text )
 
         CopyReturn str ->
-            ( { model | popupMessage = str, showPopup = True} , Cmd.batch [ Delay.after 3000 HidePopup ] )
-
+            ( { model | popupMessage = str, showPopup = True }, Cmd.batch [ Delay.after 3000 HidePopup ] )
 
         HidePopup ->
             ( { model | showPopup = False }, Cmd.none )
+
+
 
 -- VIEW
 
 
 view : Model -> Html Msg
 view model =
-    div [] [
-        h1 [] [text "Kujira Migration Tool", button [ class "copy-btn" , onClick (Copy (copyForm model)) ] []]
-        , p [] [input [placeholder "Insert a valid Terra Address", onInput UpdateAddress ] []
-            , button [class "neumorphism-button", onClick SubmitRequest ] [ text "Check Address" ]
+    div []
+        [ h1 [] [ text "Kujira Migration Tool", button [ class "copy-btn", onClick (Copy (copyForm model)) ] [] ]
+        , p []
+            [ input [ placeholder "Insert a valid Terra Address", onInput UpdateAddress ] []
+            , button [ class "neumorphism-button", onClick SubmitRequest ] [ text "Check Address" ]
             ]
+        , p []
+            [ text "Unbonding: "
+            , div [ class "code" ] [ text (String.fromFloat model.amount) ]
+            ]
+        , p []
+            [ text "Proof: "
+            , div [ class "code" ] [ text model.urlUnbonding ]
+            ]
+        , p []
+            [ text "LPs: "
+            , div [ class "code" ] [ text (String.fromFloat model.bonded) ]
+            ]
+        , p []
+            [ text "Proof: "
+            , div [ class "code" ] [ text model.urlLP ]
+            ]
+        , p []
+            [ text "Old Governance: "
+            , div [ class "code" ] [ text (String.fromFloat model.stake) ]
+            ]
+        , p []
+            [ text "Proof: "
+            , div [ class "code" ] [ text model.urlOG ]
+            ]
+        , p []
+            [ text "Available: "
+            , div [ class "code" ] [ text (String.fromFloat model.available) ]
+            ]
+        , p []
+            [ text "Mapped Address: "
+            , div [ class "code" ] [ text model.mapped ]
+            ]
+        , if model.showPopup == True then
+            div [ class "error" ] [ text model.popupMessage ]
 
-        , p [] [ text ("Unbonding: ")
-                , div [class "code"] [ text (String.fromFloat model.amount)]
-                ]
-        , p [] [ text ("Proof: ")
-                , div [class "code"] [ text model.urlUnbonding ]
-                ]
-        , p [] [ text ("LPs: ")
-                , div [class "code"] [ text (String.fromFloat model.bonded)]
-                ]
-        , p [] [ text ("Proof: ") 
-                , div [class "code"] [ text model.urlLP ]
-                ]
-        , p [] [ text ("Old Governance: " )
-                , div [class "code"] [ text (String.fromFloat model.stake)]
-                ]
-        , p [] [ text ("Proof: ")
-                , div [class "code"] [ text model.urlOG ]
-                ]
-        , p [] [ text ("Available: ")
-                , div [class "code"] [ text (String.fromFloat model.available)]
-                ]
-        , p [] [ text ("Mapped Address: ")
-                , div [class "code"] [ text model.mapped ]
-                ]
-        ,if model.showPopup == True then
-            div [ class "error" ]  [ text model.popupMessage ]
           else
             div [] []
         ]
 
+
 copyForm : Model -> String
-copyForm model = "Address: " ++ model.address 
-        ++ "\nUnbonding: " ++ String.fromFloat model.amount ++ " usKUJI"
-        ++ "\nProof: " ++ model.urlUnbonding 
-        ++ "\nLPs: " ++ String.fromFloat model.bonded ++ " uLPs"
-        ++ "\nProof: " ++ model.urlLP
-        ++ "\nOld Governance: " ++ fromFloat model.stake ++ " uKUJI"
-        ++ "\nProof: " ++ model.urlOG
-        ++ "\nAvailable: " ++ fromFloat model.available ++ " uKUJI"
-        ++ "\nMapped Address: " ++ model.mapped
+copyForm model =
+    "Address: "
+        ++ model.address
+        ++ "\nUnbonding: "
+        ++ String.fromFloat model.amount
+        ++ " usKUJI"
+        ++ "\nProof: "
+        ++ model.urlUnbonding
+        ++ "\nLPs: "
+        ++ String.fromFloat model.bonded
+        ++ " uLPs"
+        ++ "\nProof: "
+        ++ model.urlLP
+        ++ "\nOld Governance: "
+        ++ fromFloat model.stake
+        ++ " uKUJI"
+        ++ "\nProof: "
+        ++ model.urlOG
+        ++ "\nAvailable: "
+        ++ fromFloat model.available
+        ++ " uKUJI"
+        ++ "\nMapped Address: "
+        ++ model.mapped
+
+
 
 -- DECODERS
 
@@ -525,4 +558,3 @@ subscriptions model =
 -- Unbonding (3claims) terra1arr33mrru6sd29z2pyupmculxdaenzags2quzc
 -- Old Governance: terra1mseqs6rwgx5mhy2mcv450g4hky20rglchq5379
 -- Old Governance (Claims Sumados) terra12vvt923ger4jdszmx50zvcekklg9np9j44k495
-

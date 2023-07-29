@@ -5418,7 +5418,7 @@ var $author$project$Main$amountDecoder = A2(
 							}
 						},
 						$elm$json$Json$Decode$string))))));
-var $author$project$Main$availableBalance = 'https://lcd.kaiyo.kujira.setten.io/cosmos/bank/v1beta1/balances/';
+var $author$project$Main$availableBalance = 'https://lcd-kujira.mintthemoon.xyz/cosmos/bank/v1beta1/balances/';
 var $author$project$Main$availableDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'balance',
